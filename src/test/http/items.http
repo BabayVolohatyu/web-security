@@ -1,0 +1,40 @@
+###1. GET All items
+GET http://localhost:8080/api/v1/items
+Accept: application/json
+
+###
+
+###2. GET one item
+GET http://localhost:8080/api/v1/items/2
+Accept: application/json
+
+###
+
+###3. CREATE one item
+POST http://localhost:8080/api/v1/items
+Content-Type: application/json
+
+{
+  "name": "Outworld arena",
+  "description": "Foraging arena for a small colony"
+}
+
+###
+
+###4. Update one item
+PUT http://localhost:8080/api/v1/items
+Content-Type: application/json
+
+{
+  "id": "1",
+  "name": "Lasius niger colony",
+  "description": "Starter colony, brood checked"
+}
+
+###
+
+###5. DELETE one item
+DELETE http://localhost:8080/api/v1/items/3
+Accept: application/json
+
+###
