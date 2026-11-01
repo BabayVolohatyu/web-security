@@ -11,6 +11,7 @@ package chnu.edu.websecurity26.controller;
 import chnu.edu.websecurity26.model.Item;
 import chnu.edu.websecurity26.service.ItemService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,6 +54,7 @@ public class ItemController {
         itemService.deleteItem(id);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("hello/admin")
     public String helloAdmin() {
         return "Hello Admin!";
@@ -63,11 +65,13 @@ public class ItemController {
         return "Hello Unknown!";
     }
 
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/hello/user")
     public String hello() {
         return "Hello!, user";
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')")
     @GetMapping("/hello/man")
     public String helloMan() {
         return "Hello, man!";
