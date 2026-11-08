@@ -1,18 +1,30 @@
-###1. GET All items
+### 1. show all
 GET http://localhost:8080/api/v1/items
 Authorization: Basic admin admin
 Accept: application/json
 
+> {%
+client.test("show all returns 200", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
 ###
 
-###2. GET one item
+### 2. read one
 GET http://localhost:8080/api/v1/items/2
 Authorization: Basic admin admin
 Accept: application/json
 
+> {%
+client.test("read one returns 200", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
 ###
 
-######3. CREATE one item
+### 3. create one
 POST http://localhost:8080/api/v1/items
 Authorization: Basic admin admin
 Content-Type: application/json
@@ -22,9 +34,15 @@ Content-Type: application/json
   "description": "Foraging arena for a small colony"
 }
 
+> {%
+client.test("create one returns 200", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
 ###
 
-######4.  Update one item
+### 4. update one
 PUT http://localhost:8080/api/v1/items
 Authorization: Basic admin admin
 Content-Type: application/json
@@ -35,11 +53,23 @@ Content-Type: application/json
   "description": "Starter colony, brood checked"
 }
 
+> {%
+client.test("update one returns 200", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
 ###
 
-### 5. DELETE one item
-DELETE http://localhost:8080/api/v1/items/1
+### 5. delete one
+DELETE http://localhost:8080/api/v1/items/3
 Authorization: Basic admin admin
 Accept: application/json
+
+> {%
+client.test("delete one returns 200", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
 
 ###
