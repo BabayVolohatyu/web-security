@@ -103,7 +103,7 @@ public class AccessTests {
     @Test
     @WithAnonymousUser
     void anonymousCannotReadAdminHello() throws Exception {
-        assertDenied("/api/v1/items/hello/admin", 401, "Unauthorized");
+        assertDenied("/api/v1/items/hello/admin", 403, "Forbidden");
     }
 
     private void assertOk(String path, String body) throws Exception {
