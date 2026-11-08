@@ -1,0 +1,5117 @@
+{
+  "info": {
+    "name": "Web Security 26",
+    "description": "Import this collection and web-security.local.postman_environment.json.\nSelect the environment Web Security local in the top right. baseUrl is http://localhost:8080.\nEach numbered folder matches one evidence folder and one git branch. Boot that branch with docker compose up --build before sending the folder.\nFolder All endpoints matches branch lab10, which is the app to leave running.\nJWT folders start with Get JWT. That request writes the token into the environment. The next requests send Authorization: Bearer {{jwtAdmin}} or {{jwtUser}} or {{jwtSuperadmin}}.\nBasic-auth folders put the username and password on the request from the environment. A request with no auth is a separate call, not the same call with the header removed by hand.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "protocol",
+      "value": "http"
+    },
+    {
+      "key": "host",
+      "value": "localhost"
+    },
+    {
+      "key": "port",
+      "value": "8080"
+    },
+    {
+      "key": "adminUser",
+      "value": "admin"
+    },
+    {
+      "key": "adminPassword",
+      "value": "admin"
+    },
+    {
+      "key": "badUser",
+      "value": "admin1"
+    },
+    {
+      "key": "badPassword",
+      "value": "admin"
+    },
+    {
+      "key": "userUser",
+      "value": "user"
+    },
+    {
+      "key": "userPassword",
+      "value": "user"
+    },
+    {
+      "key": "superadminUser",
+      "value": "superadmin"
+    },
+    {
+      "key": "superadminPassword",
+      "value": "superadmin"
+    },
+    {
+      "key": "adminEmail",
+      "value": "john@mail.com"
+    },
+    {
+      "key": "adminJwtPassword",
+      "value": "admin"
+    },
+    {
+      "key": "userEmail",
+      "value": "tom@mail.com"
+    },
+    {
+      "key": "userJwtPassword",
+      "value": "user"
+    },
+    {
+      "key": "superadminEmail",
+      "value": "olena@mail.com"
+    },
+    {
+      "key": "superadminJwtPassword",
+      "value": "superadmin"
+    },
+    {
+      "key": "jwt",
+      "value": ""
+    },
+    {
+      "key": "jwtAdmin",
+      "value": ""
+    },
+    {
+      "key": "jwtUser",
+      "value": ""
+    },
+    {
+      "key": "jwtSuperadmin",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "01 Simple web application",
+      "description": "Git branch lab1. Boot the app and open the shop page. No security yet.",
+      "item": [
+        {
+          "name": "Open the shop page",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Static page served by Spring Boot. Expect the Formicary heading.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/index.html",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "index.html"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "02 HTTP requests",
+      "description": "Git commit d281fdf on the way to lab2. Security is not on this commit, so every item call is open. Checkout that commit before running this folder. The branch tip lab2 already requires basic auth.",
+      "item": [
+        {
+          "name": "List colonies",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Plain item API call. Body fields are the shop goods: colonies, queens, formicaria.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Read the Messor queen",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Plain item API call. Body fields are the shop goods: colonies, queens, formicaria.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/2",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "2"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create an outworld",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Plain item API call. Body fields are the shop goods: colonies, queens, formicaria.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Outworld arena\",\n  \"description\": \"Foraging arena for a small colony\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update the Lasius colony",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Plain item API call. Body fields are the shop goods: colonies, queens, formicaria.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"1\",\n  \"name\": \"Lasius niger colony\",\n  \"description\": \"Starter colony, brood checked\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete the gypsum formicarium",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Plain item API call. Body fields are the shop goods: colonies, queens, formicaria.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/3",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "3"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "03 Basic authorization",
+      "description": "Git branch lab2, commit 5bb56a0. Spring Security default user from application.properties: admin / admin. CSRF is still enabled, so a POST is rejected even with the right password. Select the Web Security local environment before sending.",
+      "item": [
+        {
+          "name": "List colonies with no password",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "No Authorization header. Spring Security answers 401 and sends WWW-Authenticate: Basic.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 401', function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List colonies with a wrong password",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{badUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{badPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Username admin1 does not exist. Same 401 as a missing password.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 401', function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List colonies as admin",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Basic admin / admin. Expect the three seeded goods.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Read the Messor queen as admin",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Same password, one document.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/2",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "2"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create an outworld as admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Correct password, but CSRF is still on, so the write is refused with 401.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Outworld arena\",\n  \"description\": \"Foraging arena for a small colony\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 401', function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "04 CSRF and audit",
+      "description": "Git branch lab3. CSRF is disabled so the HTTP client can write. Mongo auditing stamps createdBy Admin and bumps version on update. Basic user is still admin / admin.",
+      "item": [
+        {
+          "name": "List colonies as admin",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Each item now has createdBy, createdDate, lastModifiedBy, lastModifiedDate, and version.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Read the Messor queen as admin",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "version is 0 until an update.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/2",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "2"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create an outworld as admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "201-style success is HTTP 200 here. createdBy is Admin and version is 0.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Outworld arena\",\n  \"description\": \"Foraging arena for a small colony\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update the Lasius colony as admin",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Saving the existing id moves version from 0 to 1. createdBy stays Admin.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"1\",\n  \"name\": \"Lasius niger colony\",\n  \"description\": \"Starter colony, brood checked\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete an item as admin",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Empty body, HTTP 200.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/3",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "3"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List colonies with no password",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Still protected. 401.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 401', function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "05 Multi-user",
+      "description": "Git branch lab4. Three in-memory users. Rules are on the URL, not on the method: hello/admin is ADMIN, hello/user is USER, hello/man is USER or ADMIN. Passwords are the same as the usernames and are stored with {noop}, so they are not hashed.",
+      "item": [
+        {
+          "name": "Admin reads hello/admin",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "admin / admin. hasRole ADMIN matches. Expect HTTP 200.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/admin",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "admin"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "User is refused hello/admin",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{userUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{userPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "user / user. USER is not ADMIN. Expect HTTP 403.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/admin",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "admin"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 403', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Superadmin is refused hello/admin",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{superadminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{superadminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "superadmin / superadmin. SUPERADMIN is a different role. Expect HTTP 403.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/admin",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "admin"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 403', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "User reads hello/user",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{userUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{userPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "user / user. hasRole USER matches. Expect HTTP 200.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/user",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "user"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin is refused hello/user",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "admin / admin. ADMIN is not USER. Expect HTTP 403.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/user",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "user"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 403', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Superadmin is refused hello/user",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{superadminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{superadminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "superadmin / superadmin. SUPERADMIN is not USER. Expect HTTP 403.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/user",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "user"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 403', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "User reads hello/man",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{userUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{userPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "user / user. On this branch hello/man allows USER or ADMIN. Expect HTTP 200.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/man",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "man"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin reads hello/man",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "admin / admin. ADMIN is allowed. Expect HTTP 200.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/man",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "man"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Superadmin is refused hello/man",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{superadminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{superadminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "superadmin / superadmin. SUPERADMIN is not in the matcher. Expect HTTP 403.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/man",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "man"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 403', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Anonymous list is refused",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "No password. anyRequest().authenticated() and HTTP Basic is on, so the challenge is 401. Expect HTTP 401.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 401', function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "06 Annotations",
+      "description": "Git branch lab5. The same three users, now checked with @PreAuthorize on the method. hello/man allows ADMIN or SUPERADMIN, not USER. Passwords are BCrypt. HTTP Basic is still the login.",
+      "item": [
+        {
+          "name": "Admin reads hello/admin",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "admin / admin. hasRole('ADMIN'). Expect HTTP 200.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/admin",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "admin"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "User is refused hello/admin",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{userUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{userPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "user / user. Method security returns 403. Expect HTTP 403.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/admin",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "admin"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 403', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Superadmin is refused hello/admin",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{superadminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{superadminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "superadmin / superadmin. Not ADMIN. Expect HTTP 403.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/admin",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "admin"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 403', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "User reads hello/user",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{userUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{userPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "user / user. hasRole('USER'). Expect HTTP 200.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/user",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "user"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin is refused hello/user",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "admin / admin. Not USER. Expect HTTP 403.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/user",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "user"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 403', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Superadmin is refused hello/user",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{superadminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{superadminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "superadmin / superadmin. Not USER. Expect HTTP 403.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/user",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "user"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 403', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin reads hello/man",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "admin / admin. hasAnyRole ADMIN, SUPERADMIN. Expect HTTP 200.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/man",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "man"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Superadmin reads hello/man",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{superadminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{superadminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "superadmin / superadmin. SUPERADMIN is allowed from this lab on. Expect HTTP 200.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/man",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "man"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "User is refused hello/man",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{userUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{userPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "user / user. USER dropped off hello/man. Expect HTTP 403.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/man",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "man"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 403', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Anonymous hello/admin is refused",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "No password. HTTP Basic is still enabled. Expect HTTP 401.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/admin",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "admin"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 401', function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "07 Access testing",
+      "description": "Git branch lab6. No new route. AccessTests is ten JUnit cases for the annotation matrix from lab 6. This folder repeats those calls so you can show the behavior the tests lock in. Run mvn -Dtest=AccessTests test for the green bar.",
+      "item": [
+        {
+          "name": "Admin reads hello/admin",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "admin / admin. hasRole('ADMIN'). Expect HTTP 200.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/admin",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "admin"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "User is refused hello/admin",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{userUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{userPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "user / user. Method security returns 403. Expect HTTP 403.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/admin",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "admin"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 403', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Superadmin is refused hello/admin",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{superadminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{superadminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "superadmin / superadmin. Not ADMIN. Expect HTTP 403.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/admin",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "admin"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 403', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "User reads hello/user",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{userUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{userPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "user / user. hasRole('USER'). Expect HTTP 200.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/user",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "user"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin is refused hello/user",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "admin / admin. Not USER. Expect HTTP 403.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/user",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "user"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 403', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Superadmin is refused hello/user",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{superadminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{superadminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "superadmin / superadmin. Not USER. Expect HTTP 403.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/user",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "user"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 403', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin reads hello/man",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "admin / admin. hasAnyRole ADMIN, SUPERADMIN. Expect HTTP 200.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/man",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "man"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Superadmin reads hello/man",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{superadminUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{superadminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "superadmin / superadmin. SUPERADMIN is allowed from this lab on. Expect HTTP 200.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/man",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "man"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "User is refused hello/man",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{userUser}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{userPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "user / user. USER dropped off hello/man. Expect HTTP 403.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/man",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "man"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 403', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Anonymous hello/admin is refused",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "No password. HTTP Basic is still enabled. Expect HTTP 401.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/admin",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "admin"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 401', function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "08 JWT settings",
+      "description": "Git branch lab7. Users move to Mongo. The chain is stateless, /auth/** is public, and there is no HTTP Basic. AuthenticationService still returns null, so the body is empty. A call with no token is 403, not 401, because nothing sends a Basic challenge.",
+      "item": [
+        {
+          "name": "Get JWT (settings stub)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Body field is login, not email yet. The service returns null. The script stores an empty jwt so you can see the variable.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/auth/authenticate",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "auth",
+                "authenticate"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"login\": \"{{adminUser}}\",\n  \"password\": \"{{adminPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "let token = '';",
+                  "try {",
+                  "    const body = pm.response.json();",
+                  "    token = body && body.token ? body.token : '';",
+                  "} catch (error) {",
+                  "    token = '';",
+                  "}",
+                  "function keep(name, value) {",
+                  "    pm.collectionVariables.set(name, value);",
+                  "    pm.variables.set(name, value);",
+                  "    try { pm.environment.set(name, value); } catch (error) {}",
+                  "}",
+                  "keep('jwt', token);",
+                  "keep('jwt', token);",
+                  "pm.test('Authentication responded', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200]);",
+                  "});",
+                  "pm.test('Token was stored', function () {",
+                  "    pm.expect(pm.collectionVariables.get('jwt')).to.eql(token);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Hello admin with no token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "No Authorization header. Stateless chain, no entry point that writes 401. Expect HTTP 403.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/admin",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "admin"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 403', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "09 JWT token",
+      "description": "Git branch lab9. Run Get JWT first. It signs an HS384 token for John Smith and stores it in jwt and jwtAdmin. The filter is not installed yet, so sending that token to hello/admin still fails.",
+      "item": [
+        {
+          "name": "Get JWT (John Smith, ADMIN)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "POST /auth/authenticate with email and password. The test script copies body.token into the environment.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/auth/authenticate",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "auth",
+                "authenticate"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{adminEmail}}\",\n  \"password\": \"{{adminJwtPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "let token = '';",
+                  "try {",
+                  "    const body = pm.response.json();",
+                  "    token = body && body.token ? body.token : '';",
+                  "} catch (error) {",
+                  "    token = '';",
+                  "}",
+                  "function keep(name, value) {",
+                  "    pm.collectionVariables.set(name, value);",
+                  "    pm.variables.set(name, value);",
+                  "    try { pm.environment.set(name, value); } catch (error) {}",
+                  "}",
+                  "keep('jwtAdmin', token);",
+                  "keep('jwt', token);",
+                  "pm.test('Authentication responded', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200]);",
+                  "});",
+                  "pm.test('Token was stored', function () {",
+                  "    pm.expect(pm.collectionVariables.get('jwtAdmin')).to.eql(token);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Hello admin with the new JWT",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwtAdmin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "Bearer {{jwtAdmin}}. No JwtFilter yet, so the bearer header is ignored. Expect HTTP 403.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/admin",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "admin"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "async function ensureToken() {",
+                  "    let token = pm.variables.get('jwtAdmin');",
+                  "    if (token) { return; }",
+                  "    const base = pm.variables.get('baseUrl');",
+                  "    const response = await pm.sendRequest({",
+                  "        url: base + '/auth/authenticate',",
+                  "        method: 'POST',",
+                  "        header: { 'Content-Type': 'application/json' },",
+                  "        body: {",
+                  "            mode: 'raw',",
+                  "            raw: JSON.stringify({",
+                  "                email: pm.variables.get('adminEmail'),",
+                  "                password: pm.variables.get('adminJwtPassword')",
+                  "            })",
+                  "        }",
+                  "    });",
+                  "    token = response.json().token;",
+                  "    function keep(name, value) {",
+                  "        pm.collectionVariables.set(name, value);",
+                  "        pm.variables.set(name, value);",
+                  "        try { pm.environment.set(name, value); } catch (error) {}",
+                  "    }",
+                  "    keep('jwtAdmin', token);",
+                  "    keep('jwt', token);",
+                  "}",
+                  "await ensureToken();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 403', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Hello admin with no token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "No header. Same denial. The token is real, the door is not wired. Expect HTTP 403.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/admin",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "admin"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 403', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "10 JWT on the routes",
+      "description": "Git branch lab10. This is the app on port 8080. Run the three Get JWT requests first. Each one stores a different environment variable. Authorities inside the token are ADMIN, USER, and SUPERADMIN with no ROLE_ prefix, which is why the controller uses hasAuthority.",
+      "item": [
+        {
+          "name": "Get JWT (John Smith, ADMIN)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Stores jwtAdmin and jwt. Password is admin.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/auth/authenticate",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "auth",
+                "authenticate"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{adminEmail}}\",\n  \"password\": \"{{adminJwtPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "let token = '';",
+                  "try {",
+                  "    const body = pm.response.json();",
+                  "    token = body && body.token ? body.token : '';",
+                  "} catch (error) {",
+                  "    token = '';",
+                  "}",
+                  "function keep(name, value) {",
+                  "    pm.collectionVariables.set(name, value);",
+                  "    pm.variables.set(name, value);",
+                  "    try { pm.environment.set(name, value); } catch (error) {}",
+                  "}",
+                  "keep('jwtAdmin', token);",
+                  "keep('jwt', token);",
+                  "pm.test('Authentication responded', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200]);",
+                  "});",
+                  "pm.test('Token was stored', function () {",
+                  "    pm.expect(pm.collectionVariables.get('jwtAdmin')).to.eql(token);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get JWT (Tom Thompson, USER)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Stores jwtUser and jwt. Password is user.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/auth/authenticate",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "auth",
+                "authenticate"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{userEmail}}\",\n  \"password\": \"{{userJwtPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "let token = '';",
+                  "try {",
+                  "    const body = pm.response.json();",
+                  "    token = body && body.token ? body.token : '';",
+                  "} catch (error) {",
+                  "    token = '';",
+                  "}",
+                  "function keep(name, value) {",
+                  "    pm.collectionVariables.set(name, value);",
+                  "    pm.variables.set(name, value);",
+                  "    try { pm.environment.set(name, value); } catch (error) {}",
+                  "}",
+                  "keep('jwtUser', token);",
+                  "keep('jwt', token);",
+                  "pm.test('Authentication responded', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200]);",
+                  "});",
+                  "pm.test('Token was stored', function () {",
+                  "    pm.expect(pm.collectionVariables.get('jwtUser')).to.eql(token);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get JWT (Olena Keeper, SUPERADMIN)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Stores jwtSuperadmin and jwt. Password is superadmin.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/auth/authenticate",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "auth",
+                "authenticate"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{superadminEmail}}\",\n  \"password\": \"{{superadminJwtPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "let token = '';",
+                  "try {",
+                  "    const body = pm.response.json();",
+                  "    token = body && body.token ? body.token : '';",
+                  "} catch (error) {",
+                  "    token = '';",
+                  "}",
+                  "function keep(name, value) {",
+                  "    pm.collectionVariables.set(name, value);",
+                  "    pm.variables.set(name, value);",
+                  "    try { pm.environment.set(name, value); } catch (error) {}",
+                  "}",
+                  "keep('jwtSuperadmin', token);",
+                  "keep('jwt', token);",
+                  "pm.test('Authentication responded', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200]);",
+                  "});",
+                  "pm.test('Token was stored', function () {",
+                  "    pm.expect(pm.collectionVariables.get('jwtSuperadmin')).to.eql(token);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Hello admin as John",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwtAdmin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "jwtAdmin. Authority ADMIN. Body is Hello Admin! Expect HTTP 200.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/admin",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "admin"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "async function ensureToken() {",
+                  "    let token = pm.variables.get('jwtAdmin');",
+                  "    if (token) { return; }",
+                  "    const base = pm.variables.get('baseUrl');",
+                  "    const response = await pm.sendRequest({",
+                  "        url: base + '/auth/authenticate',",
+                  "        method: 'POST',",
+                  "        header: { 'Content-Type': 'application/json' },",
+                  "        body: {",
+                  "            mode: 'raw',",
+                  "            raw: JSON.stringify({",
+                  "                email: pm.variables.get('adminEmail'),",
+                  "                password: pm.variables.get('adminJwtPassword')",
+                  "            })",
+                  "        }",
+                  "    });",
+                  "    token = response.json().token;",
+                  "    function keep(name, value) {",
+                  "        pm.collectionVariables.set(name, value);",
+                  "        pm.variables.set(name, value);",
+                  "        try { pm.environment.set(name, value); } catch (error) {}",
+                  "    }",
+                  "    keep('jwtAdmin', token);",
+                  "    keep('jwt', token);",
+                  "}",
+                  "await ensureToken();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Hello admin as Tom",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwtUser}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "jwtUser. USER cannot pass hasAuthority('ADMIN'). Expect HTTP 403.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/admin",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "admin"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "async function ensureToken() {",
+                  "    let token = pm.variables.get('jwtUser');",
+                  "    if (token) { return; }",
+                  "    const base = pm.variables.get('baseUrl');",
+                  "    const response = await pm.sendRequest({",
+                  "        url: base + '/auth/authenticate',",
+                  "        method: 'POST',",
+                  "        header: { 'Content-Type': 'application/json' },",
+                  "        body: {",
+                  "            mode: 'raw',",
+                  "            raw: JSON.stringify({",
+                  "                email: pm.variables.get('userEmail'),",
+                  "                password: pm.variables.get('userJwtPassword')",
+                  "            })",
+                  "        }",
+                  "    });",
+                  "    token = response.json().token;",
+                  "    function keep(name, value) {",
+                  "        pm.collectionVariables.set(name, value);",
+                  "        pm.variables.set(name, value);",
+                  "        try { pm.environment.set(name, value); } catch (error) {}",
+                  "    }",
+                  "    keep('jwtUser', token);",
+                  "    keep('jwt', token);",
+                  "}",
+                  "await ensureToken();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 403', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Hello admin as Olena",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwtSuperadmin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "jwtSuperadmin. SUPERADMIN is not ADMIN. Expect HTTP 403.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/admin",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "admin"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "async function ensureToken() {",
+                  "    let token = pm.variables.get('jwtSuperadmin');",
+                  "    if (token) { return; }",
+                  "    const base = pm.variables.get('baseUrl');",
+                  "    const response = await pm.sendRequest({",
+                  "        url: base + '/auth/authenticate',",
+                  "        method: 'POST',",
+                  "        header: { 'Content-Type': 'application/json' },",
+                  "        body: {",
+                  "            mode: 'raw',",
+                  "            raw: JSON.stringify({",
+                  "                email: pm.variables.get('superadminEmail'),",
+                  "                password: pm.variables.get('superadminJwtPassword')",
+                  "            })",
+                  "        }",
+                  "    });",
+                  "    token = response.json().token;",
+                  "    function keep(name, value) {",
+                  "        pm.collectionVariables.set(name, value);",
+                  "        pm.variables.set(name, value);",
+                  "        try { pm.environment.set(name, value); } catch (error) {}",
+                  "    }",
+                  "    keep('jwtSuperadmin', token);",
+                  "    keep('jwt', token);",
+                  "}",
+                  "await ensureToken();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 403', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Hello admin with no token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "No header. Method security denies an anonymous caller. Expect HTTP 403.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/admin",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "admin"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 403', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Hello user as Tom",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwtUser}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "jwtUser. Body is Hello!, user Expect HTTP 200.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/user",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "user"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "async function ensureToken() {",
+                  "    let token = pm.variables.get('jwtUser');",
+                  "    if (token) { return; }",
+                  "    const base = pm.variables.get('baseUrl');",
+                  "    const response = await pm.sendRequest({",
+                  "        url: base + '/auth/authenticate',",
+                  "        method: 'POST',",
+                  "        header: { 'Content-Type': 'application/json' },",
+                  "        body: {",
+                  "            mode: 'raw',",
+                  "            raw: JSON.stringify({",
+                  "                email: pm.variables.get('userEmail'),",
+                  "                password: pm.variables.get('userJwtPassword')",
+                  "            })",
+                  "        }",
+                  "    });",
+                  "    token = response.json().token;",
+                  "    function keep(name, value) {",
+                  "        pm.collectionVariables.set(name, value);",
+                  "        pm.variables.set(name, value);",
+                  "        try { pm.environment.set(name, value); } catch (error) {}",
+                  "    }",
+                  "    keep('jwtUser', token);",
+                  "    keep('jwt', token);",
+                  "}",
+                  "await ensureToken();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Hello user as John",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwtAdmin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "jwtAdmin. ADMIN is not USER. Expect HTTP 403.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/user",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "user"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "async function ensureToken() {",
+                  "    let token = pm.variables.get('jwtAdmin');",
+                  "    if (token) { return; }",
+                  "    const base = pm.variables.get('baseUrl');",
+                  "    const response = await pm.sendRequest({",
+                  "        url: base + '/auth/authenticate',",
+                  "        method: 'POST',",
+                  "        header: { 'Content-Type': 'application/json' },",
+                  "        body: {",
+                  "            mode: 'raw',",
+                  "            raw: JSON.stringify({",
+                  "                email: pm.variables.get('adminEmail'),",
+                  "                password: pm.variables.get('adminJwtPassword')",
+                  "            })",
+                  "        }",
+                  "    });",
+                  "    token = response.json().token;",
+                  "    function keep(name, value) {",
+                  "        pm.collectionVariables.set(name, value);",
+                  "        pm.variables.set(name, value);",
+                  "        try { pm.environment.set(name, value); } catch (error) {}",
+                  "    }",
+                  "    keep('jwtAdmin', token);",
+                  "    keep('jwt', token);",
+                  "}",
+                  "await ensureToken();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 403', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Hello user as Olena",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwtSuperadmin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "jwtSuperadmin. SUPERADMIN is not USER. Expect HTTP 403.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/user",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "user"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "async function ensureToken() {",
+                  "    let token = pm.variables.get('jwtSuperadmin');",
+                  "    if (token) { return; }",
+                  "    const base = pm.variables.get('baseUrl');",
+                  "    const response = await pm.sendRequest({",
+                  "        url: base + '/auth/authenticate',",
+                  "        method: 'POST',",
+                  "        header: { 'Content-Type': 'application/json' },",
+                  "        body: {",
+                  "            mode: 'raw',",
+                  "            raw: JSON.stringify({",
+                  "                email: pm.variables.get('superadminEmail'),",
+                  "                password: pm.variables.get('superadminJwtPassword')",
+                  "            })",
+                  "        }",
+                  "    });",
+                  "    token = response.json().token;",
+                  "    function keep(name, value) {",
+                  "        pm.collectionVariables.set(name, value);",
+                  "        pm.variables.set(name, value);",
+                  "        try { pm.environment.set(name, value); } catch (error) {}",
+                  "    }",
+                  "    keep('jwtSuperadmin', token);",
+                  "    keep('jwt', token);",
+                  "}",
+                  "await ensureToken();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 403', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Hello staff as John",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwtAdmin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "jwtAdmin. hasAnyAuthority ADMIN, SUPERADMIN. Body is Hello, man! Expect HTTP 200.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/man",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "man"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "async function ensureToken() {",
+                  "    let token = pm.variables.get('jwtAdmin');",
+                  "    if (token) { return; }",
+                  "    const base = pm.variables.get('baseUrl');",
+                  "    const response = await pm.sendRequest({",
+                  "        url: base + '/auth/authenticate',",
+                  "        method: 'POST',",
+                  "        header: { 'Content-Type': 'application/json' },",
+                  "        body: {",
+                  "            mode: 'raw',",
+                  "            raw: JSON.stringify({",
+                  "                email: pm.variables.get('adminEmail'),",
+                  "                password: pm.variables.get('adminJwtPassword')",
+                  "            })",
+                  "        }",
+                  "    });",
+                  "    token = response.json().token;",
+                  "    function keep(name, value) {",
+                  "        pm.collectionVariables.set(name, value);",
+                  "        pm.variables.set(name, value);",
+                  "        try { pm.environment.set(name, value); } catch (error) {}",
+                  "    }",
+                  "    keep('jwtAdmin', token);",
+                  "    keep('jwt', token);",
+                  "}",
+                  "await ensureToken();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Hello staff as Olena",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwtSuperadmin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "jwtSuperadmin. SUPERADMIN is allowed. Expect HTTP 200.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/man",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "man"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "async function ensureToken() {",
+                  "    let token = pm.variables.get('jwtSuperadmin');",
+                  "    if (token) { return; }",
+                  "    const base = pm.variables.get('baseUrl');",
+                  "    const response = await pm.sendRequest({",
+                  "        url: base + '/auth/authenticate',",
+                  "        method: 'POST',",
+                  "        header: { 'Content-Type': 'application/json' },",
+                  "        body: {",
+                  "            mode: 'raw',",
+                  "            raw: JSON.stringify({",
+                  "                email: pm.variables.get('superadminEmail'),",
+                  "                password: pm.variables.get('superadminJwtPassword')",
+                  "            })",
+                  "        }",
+                  "    });",
+                  "    token = response.json().token;",
+                  "    function keep(name, value) {",
+                  "        pm.collectionVariables.set(name, value);",
+                  "        pm.variables.set(name, value);",
+                  "        try { pm.environment.set(name, value); } catch (error) {}",
+                  "    }",
+                  "    keep('jwtSuperadmin', token);",
+                  "    keep('jwt', token);",
+                  "}",
+                  "await ensureToken();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Hello staff as Tom",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwtUser}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "jwtUser. USER is not staff. Expect HTTP 403.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/man",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "man"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "async function ensureToken() {",
+                  "    let token = pm.variables.get('jwtUser');",
+                  "    if (token) { return; }",
+                  "    const base = pm.variables.get('baseUrl');",
+                  "    const response = await pm.sendRequest({",
+                  "        url: base + '/auth/authenticate',",
+                  "        method: 'POST',",
+                  "        header: { 'Content-Type': 'application/json' },",
+                  "        body: {",
+                  "            mode: 'raw',",
+                  "            raw: JSON.stringify({",
+                  "                email: pm.variables.get('userEmail'),",
+                  "                password: pm.variables.get('userJwtPassword')",
+                  "            })",
+                  "        }",
+                  "    });",
+                  "    token = response.json().token;",
+                  "    function keep(name, value) {",
+                  "        pm.collectionVariables.set(name, value);",
+                  "        pm.variables.set(name, value);",
+                  "        try { pm.environment.set(name, value); } catch (error) {}",
+                  "    }",
+                  "    keep('jwtUser', token);",
+                  "    keep('jwt', token);",
+                  "}",
+                  "await ensureToken();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 403', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Hello unknown with no token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "No annotation on this method. permitAll at the filter, and no @PreAuthorize, so the text Hello Unknown! is public. Expect HTTP 200.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/unknown",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "unknown"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "All endpoints",
+      "description": "Every route on branch lab10, which is the running server. Get JWT requests are first. Run those three, then the rest. Item writes do not need a token because the filter chain permits every URL and only the hello methods are annotated. Restarting the app reseeds the three goods, so a delete is safe.",
+      "item": [
+        {
+          "name": "Get JWT (John Smith, ADMIN)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Run this before any request that uses {{jwtAdmin}}.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/auth/authenticate",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "auth",
+                "authenticate"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{adminEmail}}\",\n  \"password\": \"{{adminJwtPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "let token = '';",
+                  "try {",
+                  "    const body = pm.response.json();",
+                  "    token = body && body.token ? body.token : '';",
+                  "} catch (error) {",
+                  "    token = '';",
+                  "}",
+                  "function keep(name, value) {",
+                  "    pm.collectionVariables.set(name, value);",
+                  "    pm.variables.set(name, value);",
+                  "    try { pm.environment.set(name, value); } catch (error) {}",
+                  "}",
+                  "keep('jwtAdmin', token);",
+                  "keep('jwt', token);",
+                  "pm.test('Authentication responded', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200]);",
+                  "});",
+                  "pm.test('Token was stored', function () {",
+                  "    pm.expect(pm.collectionVariables.get('jwtAdmin')).to.eql(token);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get JWT (Tom Thompson, USER)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Run this before any request that uses {{jwtUser}}.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/auth/authenticate",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "auth",
+                "authenticate"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{userEmail}}\",\n  \"password\": \"{{userJwtPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "let token = '';",
+                  "try {",
+                  "    const body = pm.response.json();",
+                  "    token = body && body.token ? body.token : '';",
+                  "} catch (error) {",
+                  "    token = '';",
+                  "}",
+                  "function keep(name, value) {",
+                  "    pm.collectionVariables.set(name, value);",
+                  "    pm.variables.set(name, value);",
+                  "    try { pm.environment.set(name, value); } catch (error) {}",
+                  "}",
+                  "keep('jwtUser', token);",
+                  "keep('jwt', token);",
+                  "pm.test('Authentication responded', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200]);",
+                  "});",
+                  "pm.test('Token was stored', function () {",
+                  "    pm.expect(pm.collectionVariables.get('jwtUser')).to.eql(token);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get JWT (Olena Keeper, SUPERADMIN)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Run this before any request that uses {{jwtSuperadmin}}.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/auth/authenticate",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "auth",
+                "authenticate"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{superadminEmail}}\",\n  \"password\": \"{{superadminJwtPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "let token = '';",
+                  "try {",
+                  "    const body = pm.response.json();",
+                  "    token = body && body.token ? body.token : '';",
+                  "} catch (error) {",
+                  "    token = '';",
+                  "}",
+                  "function keep(name, value) {",
+                  "    pm.collectionVariables.set(name, value);",
+                  "    pm.variables.set(name, value);",
+                  "    try { pm.environment.set(name, value); } catch (error) {}",
+                  "}",
+                  "keep('jwtSuperadmin', token);",
+                  "keep('jwt', token);",
+                  "pm.test('Authentication responded', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200]);",
+                  "});",
+                  "pm.test('Token was stored', function () {",
+                  "    pm.expect(pm.collectionVariables.get('jwtSuperadmin')).to.eql(token);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Open the shop page",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Public static page.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/index.html",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "index.html"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List colonies",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "No token required on lab10.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Read the Messor queen",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Id 2 is seeded on startup.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/2",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "2"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create an outworld",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Open because permitAll. createdBy depends on the auditor.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Outworld arena\",\n  \"description\": \"Foraging arena for a small colony\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update the Lasius colony",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Id 1. version increases.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"1\",\n  \"name\": \"Lasius niger colony\",\n  \"description\": \"Starter colony, brood checked\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete the gypsum formicarium",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "Startup seeds it again on the next boot.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/3",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "3"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Hello admin as John",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwtAdmin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "jwtAdmin. Authority ADMIN. Body is Hello Admin! Expect HTTP 200.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/admin",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "admin"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "async function ensureToken() {",
+                  "    let token = pm.variables.get('jwtAdmin');",
+                  "    if (token) { return; }",
+                  "    const base = pm.variables.get('baseUrl');",
+                  "    const response = await pm.sendRequest({",
+                  "        url: base + '/auth/authenticate',",
+                  "        method: 'POST',",
+                  "        header: { 'Content-Type': 'application/json' },",
+                  "        body: {",
+                  "            mode: 'raw',",
+                  "            raw: JSON.stringify({",
+                  "                email: pm.variables.get('adminEmail'),",
+                  "                password: pm.variables.get('adminJwtPassword')",
+                  "            })",
+                  "        }",
+                  "    });",
+                  "    token = response.json().token;",
+                  "    function keep(name, value) {",
+                  "        pm.collectionVariables.set(name, value);",
+                  "        pm.variables.set(name, value);",
+                  "        try { pm.environment.set(name, value); } catch (error) {}",
+                  "    }",
+                  "    keep('jwtAdmin', token);",
+                  "    keep('jwt', token);",
+                  "}",
+                  "await ensureToken();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Hello admin as Tom",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwtUser}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "jwtUser. USER cannot pass hasAuthority('ADMIN'). Expect HTTP 403.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/admin",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "admin"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "async function ensureToken() {",
+                  "    let token = pm.variables.get('jwtUser');",
+                  "    if (token) { return; }",
+                  "    const base = pm.variables.get('baseUrl');",
+                  "    const response = await pm.sendRequest({",
+                  "        url: base + '/auth/authenticate',",
+                  "        method: 'POST',",
+                  "        header: { 'Content-Type': 'application/json' },",
+                  "        body: {",
+                  "            mode: 'raw',",
+                  "            raw: JSON.stringify({",
+                  "                email: pm.variables.get('userEmail'),",
+                  "                password: pm.variables.get('userJwtPassword')",
+                  "            })",
+                  "        }",
+                  "    });",
+                  "    token = response.json().token;",
+                  "    function keep(name, value) {",
+                  "        pm.collectionVariables.set(name, value);",
+                  "        pm.variables.set(name, value);",
+                  "        try { pm.environment.set(name, value); } catch (error) {}",
+                  "    }",
+                  "    keep('jwtUser', token);",
+                  "    keep('jwt', token);",
+                  "}",
+                  "await ensureToken();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 403', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Hello admin as Olena",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwtSuperadmin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "jwtSuperadmin. SUPERADMIN is not ADMIN. Expect HTTP 403.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/admin",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "admin"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "async function ensureToken() {",
+                  "    let token = pm.variables.get('jwtSuperadmin');",
+                  "    if (token) { return; }",
+                  "    const base = pm.variables.get('baseUrl');",
+                  "    const response = await pm.sendRequest({",
+                  "        url: base + '/auth/authenticate',",
+                  "        method: 'POST',",
+                  "        header: { 'Content-Type': 'application/json' },",
+                  "        body: {",
+                  "            mode: 'raw',",
+                  "            raw: JSON.stringify({",
+                  "                email: pm.variables.get('superadminEmail'),",
+                  "                password: pm.variables.get('superadminJwtPassword')",
+                  "            })",
+                  "        }",
+                  "    });",
+                  "    token = response.json().token;",
+                  "    function keep(name, value) {",
+                  "        pm.collectionVariables.set(name, value);",
+                  "        pm.variables.set(name, value);",
+                  "        try { pm.environment.set(name, value); } catch (error) {}",
+                  "    }",
+                  "    keep('jwtSuperadmin', token);",
+                  "    keep('jwt', token);",
+                  "}",
+                  "await ensureToken();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 403', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Hello admin with no token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "No header. Method security denies an anonymous caller. Expect HTTP 403.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/admin",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "admin"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 403', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Hello user as Tom",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwtUser}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "jwtUser. Body is Hello!, user Expect HTTP 200.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/user",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "user"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "async function ensureToken() {",
+                  "    let token = pm.variables.get('jwtUser');",
+                  "    if (token) { return; }",
+                  "    const base = pm.variables.get('baseUrl');",
+                  "    const response = await pm.sendRequest({",
+                  "        url: base + '/auth/authenticate',",
+                  "        method: 'POST',",
+                  "        header: { 'Content-Type': 'application/json' },",
+                  "        body: {",
+                  "            mode: 'raw',",
+                  "            raw: JSON.stringify({",
+                  "                email: pm.variables.get('userEmail'),",
+                  "                password: pm.variables.get('userJwtPassword')",
+                  "            })",
+                  "        }",
+                  "    });",
+                  "    token = response.json().token;",
+                  "    function keep(name, value) {",
+                  "        pm.collectionVariables.set(name, value);",
+                  "        pm.variables.set(name, value);",
+                  "        try { pm.environment.set(name, value); } catch (error) {}",
+                  "    }",
+                  "    keep('jwtUser', token);",
+                  "    keep('jwt', token);",
+                  "}",
+                  "await ensureToken();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Hello user as John",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwtAdmin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "jwtAdmin. ADMIN is not USER. Expect HTTP 403.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/user",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "user"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "async function ensureToken() {",
+                  "    let token = pm.variables.get('jwtAdmin');",
+                  "    if (token) { return; }",
+                  "    const base = pm.variables.get('baseUrl');",
+                  "    const response = await pm.sendRequest({",
+                  "        url: base + '/auth/authenticate',",
+                  "        method: 'POST',",
+                  "        header: { 'Content-Type': 'application/json' },",
+                  "        body: {",
+                  "            mode: 'raw',",
+                  "            raw: JSON.stringify({",
+                  "                email: pm.variables.get('adminEmail'),",
+                  "                password: pm.variables.get('adminJwtPassword')",
+                  "            })",
+                  "        }",
+                  "    });",
+                  "    token = response.json().token;",
+                  "    function keep(name, value) {",
+                  "        pm.collectionVariables.set(name, value);",
+                  "        pm.variables.set(name, value);",
+                  "        try { pm.environment.set(name, value); } catch (error) {}",
+                  "    }",
+                  "    keep('jwtAdmin', token);",
+                  "    keep('jwt', token);",
+                  "}",
+                  "await ensureToken();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 403', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Hello user as Olena",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwtSuperadmin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "jwtSuperadmin. SUPERADMIN is not USER. Expect HTTP 403.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/user",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "user"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "async function ensureToken() {",
+                  "    let token = pm.variables.get('jwtSuperadmin');",
+                  "    if (token) { return; }",
+                  "    const base = pm.variables.get('baseUrl');",
+                  "    const response = await pm.sendRequest({",
+                  "        url: base + '/auth/authenticate',",
+                  "        method: 'POST',",
+                  "        header: { 'Content-Type': 'application/json' },",
+                  "        body: {",
+                  "            mode: 'raw',",
+                  "            raw: JSON.stringify({",
+                  "                email: pm.variables.get('superadminEmail'),",
+                  "                password: pm.variables.get('superadminJwtPassword')",
+                  "            })",
+                  "        }",
+                  "    });",
+                  "    token = response.json().token;",
+                  "    function keep(name, value) {",
+                  "        pm.collectionVariables.set(name, value);",
+                  "        pm.variables.set(name, value);",
+                  "        try { pm.environment.set(name, value); } catch (error) {}",
+                  "    }",
+                  "    keep('jwtSuperadmin', token);",
+                  "    keep('jwt', token);",
+                  "}",
+                  "await ensureToken();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 403', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Hello staff as John",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwtAdmin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "jwtAdmin. hasAnyAuthority ADMIN, SUPERADMIN. Body is Hello, man! Expect HTTP 200.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/man",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "man"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "async function ensureToken() {",
+                  "    let token = pm.variables.get('jwtAdmin');",
+                  "    if (token) { return; }",
+                  "    const base = pm.variables.get('baseUrl');",
+                  "    const response = await pm.sendRequest({",
+                  "        url: base + '/auth/authenticate',",
+                  "        method: 'POST',",
+                  "        header: { 'Content-Type': 'application/json' },",
+                  "        body: {",
+                  "            mode: 'raw',",
+                  "            raw: JSON.stringify({",
+                  "                email: pm.variables.get('adminEmail'),",
+                  "                password: pm.variables.get('adminJwtPassword')",
+                  "            })",
+                  "        }",
+                  "    });",
+                  "    token = response.json().token;",
+                  "    function keep(name, value) {",
+                  "        pm.collectionVariables.set(name, value);",
+                  "        pm.variables.set(name, value);",
+                  "        try { pm.environment.set(name, value); } catch (error) {}",
+                  "    }",
+                  "    keep('jwtAdmin', token);",
+                  "    keep('jwt', token);",
+                  "}",
+                  "await ensureToken();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Hello staff as Olena",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwtSuperadmin}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "jwtSuperadmin. SUPERADMIN is allowed. Expect HTTP 200.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/man",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "man"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "async function ensureToken() {",
+                  "    let token = pm.variables.get('jwtSuperadmin');",
+                  "    if (token) { return; }",
+                  "    const base = pm.variables.get('baseUrl');",
+                  "    const response = await pm.sendRequest({",
+                  "        url: base + '/auth/authenticate',",
+                  "        method: 'POST',",
+                  "        header: { 'Content-Type': 'application/json' },",
+                  "        body: {",
+                  "            mode: 'raw',",
+                  "            raw: JSON.stringify({",
+                  "                email: pm.variables.get('superadminEmail'),",
+                  "                password: pm.variables.get('superadminJwtPassword')",
+                  "            })",
+                  "        }",
+                  "    });",
+                  "    token = response.json().token;",
+                  "    function keep(name, value) {",
+                  "        pm.collectionVariables.set(name, value);",
+                  "        pm.variables.set(name, value);",
+                  "        try { pm.environment.set(name, value); } catch (error) {}",
+                  "    }",
+                  "    keep('jwtSuperadmin', token);",
+                  "    keep('jwt', token);",
+                  "}",
+                  "await ensureToken();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Hello staff as Tom",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwtUser}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "description": "jwtUser. USER is not staff. Expect HTTP 403.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/man",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "man"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "async function ensureToken() {",
+                  "    let token = pm.variables.get('jwtUser');",
+                  "    if (token) { return; }",
+                  "    const base = pm.variables.get('baseUrl');",
+                  "    const response = await pm.sendRequest({",
+                  "        url: base + '/auth/authenticate',",
+                  "        method: 'POST',",
+                  "        header: { 'Content-Type': 'application/json' },",
+                  "        body: {",
+                  "            mode: 'raw',",
+                  "            raw: JSON.stringify({",
+                  "                email: pm.variables.get('userEmail'),",
+                  "                password: pm.variables.get('userJwtPassword')",
+                  "            })",
+                  "        }",
+                  "    });",
+                  "    token = response.json().token;",
+                  "    function keep(name, value) {",
+                  "        pm.collectionVariables.set(name, value);",
+                  "        pm.variables.set(name, value);",
+                  "        try { pm.environment.set(name, value); } catch (error) {}",
+                  "    }",
+                  "    keep('jwtUser', token);",
+                  "    keep('jwt', token);",
+                  "}",
+                  "await ensureToken();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 403', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Hello unknown with no token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "No annotation on this method. permitAll at the filter, and no @PreAuthorize, so the text Hello Unknown! is public. Expect HTTP 200.",
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/v1/items/hello/unknown",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "v1",
+                "items",
+                "hello",
+                "unknown"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
