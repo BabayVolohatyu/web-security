@@ -8,9 +8,11 @@ package chnu.edu.websecurity26.auth;
   @since 08/11/2026 - 10.31
 */
 
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 public class AuthenticationResponse {
     private String token;
 }
